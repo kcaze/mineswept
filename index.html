@@ -1,0 +1,71 @@
+<html>
+<body>
+<canvas id="canvas" width=320 height=320></canvas>
+<script>
+  var canvas = document.getElementById('canvas'),
+      ctx = canvas.getContext('2d'),
+      board = [],
+      radars = [],
+      blink = [],
+      tileSize = 32,
+      width = 10,
+      height = 10;
+  for (var ii = 0; ii < height; ii++) {
+    board[ii] = [];
+    blink[ii] = [];
+    for (var jj = 0; jj < width; jj++) {
+      board[ii][jj] = Math.random() > 0.9 ? 1 : 0;
+      blink[ii][jj] = 0;
+    }
+  }
+  radars.push({
+    x: Math.floor(Math.random()*10),
+    y: Math.floor(Math.random()*10),
+    radius: 0,
+  });
+  window.setInterval(function() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < height; x++) {
+        ctx.fillStyle = blink[y][x] ? 'pink' : (board[y][x] ? 'blue' : 'black');
+        ctx.beginPath();
+        ctx.arc((x+0.5)*tileSize, (y+0.5)*tileSize, 4, 0, 2*Math.PI);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    radars.forEach(r => {
+      ctx.strokeStyle = 'red';
+      ctx.beginPath();
+      ctx.arc((r.x+0.5)*tileSize, (r.y+0.5)*tileSize, tileSize*r.radius, 0, 2*Math.PI);
+      ctx.closePath();
+      ctx.stroke();
+    });
+    radars.forEach(r => {
+      r.radius += 0.05;
+      var reset = false;
+      for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+          if (Math.sqrt(Math.abs((r.x - x)*(r.x - x) + (r.y - y)*(r.y - y) - r.radius * r.radius)) < 0.25 && board[y][x]) reset = true;
+        }
+      }
+      if (reset) {
+        for (var y = 0; y < height; y++) {
+          for (var x = 0; x < width; x++) {
+            if (Math.sqrt(Math.abs((r.x - x)*(r.x - x) + (r.y - y)*(r.y - y) - r.radius * r.radius)) < 0.25) blink[y][x] = 1;
+          }
+        }
+        r.radius = 0;
+      }
+    });
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < height; x++) {
+        blink[y][x] = Math.max(0, blink[y][x] - 0.1);
+      }
+    }
+  }, 50);
+    
+</script>
+</body>
+</html>
