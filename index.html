@@ -1,6 +1,18 @@
 <html>
+<head><title>Mineswept</title></head>
 <body oncontextmenu="return false;">
 <canvas id="canvas" width=320 height=340></canvas>
+<p>
+  <strong>Mineswept</strong> is an exciting puzzle game inspired by the classic <em>Minesweeper</em>.
+  <strong>Left click</strong> to place radars on that sweeps out where the mines are. The radar stops once it hits a mine,
+  indicating that one of the dots along that circle contains a mine. Press <strong>shift and left click</strong>
+  to flag dots that you have deduced are not mines and <strong>right click</strong> to identify a mine. Finally, existing
+  radars can be toggled on and off by <strong>left clicking</strong> on them.
+</p>
+<p>
+  Be careful where you click as placing a radar on a mine or misidentifying a dot as a mine will cause you to
+  lose!
+</p>
 <script>
   var canvas = document.getElementById('canvas'),
       ctx = canvas.getContext('2d'),
