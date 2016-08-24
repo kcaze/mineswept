@@ -7,6 +7,7 @@
       board = [],
       radars = [],
       blink = [],
+      flagged = [],
       revealed = [],
       tileSize = 32,
       width = 10,
@@ -18,9 +19,11 @@
   for (var ii = 0; ii < height; ii++) {
     board[ii] = [];
     blink[ii] = [];
+    flagged[ii] = []
     for (var jj = 0; jj < width; jj++) {
       board[ii][jj] = Math.random() > 0.9 ? 1 : 0;
       blink[ii][jj] = 0;
+      flagged[ii][jj] = 0;
       if (board[ii][jj]) minesLeft++;
     }
   }
@@ -54,16 +57,19 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < height; x++) {
-        if (blink[y][x]) ctx.fillStyle = 'pink';
-        else {
-          ctx.fillStyle = 'black';
-          for (var ii = 0; ii < revealed.length; ii++) {
-            if (revealed[ii][0] == x && revealed[ii][1] == y) ctx.fillStyle = 'red';
-          }
-          for (var ii = 0; ii < radars.length; ii++) {
-            if (radars[ii].x == x && radars[ii].y == y) {
-              ctx.fillStyle = radars[ii].on ? 'lime' : 'green';
-            }
+        ctx.fillStyle = 'black';
+        if (blink[y][x]) {
+          ctx.fillStyle = 'pink';
+        }
+        if (flagged[y][x]) {
+          ctx.fillStyle = 'navy';
+        }
+        for (var ii = 0; ii < revealed.length; ii++) {
+          if (revealed[ii][0] == x && revealed[ii][1] == y) ctx.fillStyle = 'red';
+        }
+        for (var ii = 0; ii < radars.length; ii++) {
+          if (radars[ii].x == x && radars[ii].y == y) {
+            ctx.fillStyle = radars[ii].on ? 'lime' : 'green';
           }
         }
         ctx.beginPath();
@@ -115,25 +121,31 @@
         y = e.offsetY / tileSize - 0.5,
         button = e.button;
     if (button == 0) {
-      if (radarsLeft && Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < threshold) {
-        if (board[Math.round(y)][Math.round(x)]) {
-          gameover = true;
-          return;
-        } else {
-          for (var ii = 0; ii < radars.length; ii++) {
-            if (radars[ii].x == Math.round(x) && radars[ii].y == Math.round(y)) {
-              radars[ii].on ^= 1;
-              radars[ii].radius = 0;
-              return;
+      if (e.shiftKey) {
+        flagged[Math.round(y)][Math.round(x)] ^= 1;
+      } else {
+        if (Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < threshold) {
+          if (radarsLeft && board[Math.round(y)][Math.round(x)]) {
+            gameover = true;
+            return;
+          } else {
+            for (var ii = 0; ii < radars.length; ii++) {
+              if (radars[ii].x == Math.round(x) && radars[ii].y == Math.round(y)) {
+                radars[ii].on ^= 1;
+                radars[ii].radius = 0;
+                return;
+              }
+            }
+            if (radarsLeft) {
+              radars.push({
+                x: Math.round(x),
+                y: Math.round(y),
+                radius: 0,
+                on: 1
+              }); 
+              radarsLeft -= 1;
             }
           }
-          radars.push({
-            x: Math.round(x),
-            y: Math.round(y),
-            radius: 0,
-            on: 1
-          }); 
-          radarsLeft -= 1;
         }
       }
     } else if (button == 2) {
