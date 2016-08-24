@@ -153,6 +153,11 @@
         gameover = true;
         return;
       } else {
+        var exists = false;
+        for (var ii = 0; ii < revealed.length; ii++) {
+          if (revealed[ii][0] == Math.round(x) && revealed[ii][1] == Math.round(y)) exists = true;
+        }
+        if (exists) return;
         revealed.push([Math.round(x), Math.round(y)]);
         radarsLeft += 1;
       }
