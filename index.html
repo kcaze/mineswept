@@ -24,7 +24,8 @@
       tileSize = 32,
       width = 10,
       height = 10,
-      threshold = 0.2,
+      circleSize = 0.2,
+      threshold = 0.05,
       radarsLeft = 2,
       gameover = false,
       minesLeft = 0;
@@ -85,7 +86,7 @@
           }
         }
         ctx.beginPath();
-        ctx.arc((x+0.5)*tileSize, (y+0.5)*tileSize, threshold*tileSize, 0, 2*Math.PI);
+        ctx.arc((x+0.5)*tileSize, (y+0.5)*tileSize, circleSize*tileSize, 0, 2*Math.PI);
         ctx.closePath();
         ctx.fill();
       }
@@ -136,7 +137,7 @@
       if (e.shiftKey) {
         flagged[Math.round(y)][Math.round(x)] ^= 1;
       } else {
-        if (Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < threshold) {
+        if (Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < circleSize) {
           if (radarsLeft && board[Math.round(y)][Math.round(x)]) {
             gameover = true;
             return;
@@ -178,7 +179,7 @@
   canvas.addEventListener('mousemove', function(e) {
     var x = e.offsetX / tileSize - 0.5,
         y = e.offsetY / tileSize - 0.5;
-    if (Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < threshold) document.body.style.cursor = 'pointer';
+    if (Math.sqrt(Math.pow(x - Math.round(x), 2) + Math.pow(y - Math.round(y), 2)) < circleSize) document.body.style.cursor = 'pointer';
     else document.body.style.cursor = 'default';
   });
     
