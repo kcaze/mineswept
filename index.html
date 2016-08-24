@@ -81,6 +81,7 @@
       ctx.stroke();
     });
     radars.forEach(r => {
+      if (!r.on) r.radius = 0;
       r.radius += 0.01;
       var reset = false;
       for (var y = 0; y < height; y++) {
