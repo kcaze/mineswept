@@ -48,6 +48,7 @@
         x: x,
         y: y,
         radius: 0,
+        pause: 0,
         on: 1
       });
       break;
@@ -101,7 +102,12 @@
     });
     radars.forEach(r => {
       if (!r.on) r.radius = 0;
-      r.radius += 0.01;
+      if (r.pause) {
+        r.pause = Math.max(0, r.pause - 0.05);
+        if (r.pause == 0) { r.radius = 0; }
+        return;
+      }
+      r.radius += 0.007;
       var reset = false;
       for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
@@ -116,7 +122,7 @@
             if (Math.abs(Math.sqrt((r.x - x)*(r.x - x) + (r.y - y)*(r.y - y)) - r.radius) < threshold) blink[y][x] = 1;
           }
         }
-        r.radius = 0;
+        r.pause = 1;
       }
     });
     ctx.fillStyle = 'black';
@@ -124,7 +130,7 @@
     ctx.fillText('Mines left: ' + (minesLeft - revealed.length), 100, 330);
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < height; x++) {
-        blink[y][x] = Math.max(0, blink[y][x] - 0.04);
+        blink[y][x] = Math.max(0, blink[y][x] - 0.02);
       }
     }
   }, 5);
